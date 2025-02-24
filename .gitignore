@@ -1,0 +1,7 @@
+node_modules
+*.exe
+*.out
+*.test
+
+.env
+
