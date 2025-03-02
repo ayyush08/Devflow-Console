@@ -14,5 +14,11 @@ export default {
       },
     },
   },
+  safelist: [
+    {
+      pattern: /shadow-(red|blue|green|gray|yellow|purple|pink|indigo|teal|cyan)-[3-4]00/,
+      variants: ["hover"],
+    },
+  ],
   plugins: [],
 } satisfies Config;
