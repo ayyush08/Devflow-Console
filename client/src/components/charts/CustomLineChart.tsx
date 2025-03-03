@@ -52,7 +52,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
         labels,
         datasets: [
             {
-                label: `${title}${total !== undefined ? `: ${total}` : ""}`,
+                label: `${title}`,
                 data: values,
                 borderColor: borderColor,
                 backgroundColor: backgroundColor,
@@ -64,13 +64,29 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     const options = {
         responsive: true,
         plugins: {
-            legend: { labels: { color: "#fff" } },
+            legend: {
+                labels: { color: "#fff" },
+                display: false
+            },
             tooltip: { enabled: true, },
+            title: {
+                display: true, 
+                text: total !== undefined ? `Total ${title}: ${total}  ` : '',
+                color: "#fff", 
+                font: {
+                    size: 16,
+                },
+                padding: {
+                    top: 10,
+                    bottom: 20,
+                },
+                position: "top" as const, 
+            },
         },
         scales: {
             x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.2)" } },
-            y: { 
-                ticks: { color: "#fff" }, 
+            y: {
+                ticks: { color: "#fff" },
                 grid: { color: "rgba(255,255,255,0.2)" },
                 title: { display: true, text: yAxisLabel, color: "#fff" },
             },
@@ -78,7 +94,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     };
 
     return (
-            <Line data={data} options={options} />
+        <Line data={data} options={options} />
     )
 }
 

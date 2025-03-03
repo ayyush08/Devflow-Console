@@ -75,7 +75,7 @@ export default function Dashboard() {
                         <CustomLineChart
                             dataPoints={commits}
                             total={totalCommits}
-                            title="Commits Over Time: "
+                            title="Commits: "
                             yAxisLabel="Commits"
                             />
                             </div>
