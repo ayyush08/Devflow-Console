@@ -25,7 +25,7 @@ const NonAuthButtons: React.FC<{ pathname: string }> = ({ pathname }) => {
     return (
         <>
             {pathname !== '/dashboard/public' ? <StyledLink to="/dashboard/public" color="cyan" name="Explore Metrics" /> : null}
-
+            <StyledLink to="/testing" color="teal" name="Test Charts" />
             <StyledLink to="/login" color="blue" name="Login" />
         </>
     );
