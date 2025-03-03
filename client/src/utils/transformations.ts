@@ -13,7 +13,6 @@ export const transformCommitData = (commits: Commit[]): {
     const totalCommits = commits.length;
     const commitCountByDate = new Map<string, number>();
     const commitMessages = new Map<string, string[]>();
-    //Commits by date
     commits.forEach((commit: any) => {
         const date = new Date(commit.commit.committer.date).toLocaleDateString();
         commitCountByDate.set(date, (commitCountByDate.get(date) || 0) + 1);
@@ -21,12 +20,18 @@ export const transformCommitData = (commits: Commit[]): {
         const existingMessages = commitMessages.get(date) || [];
         commitMessages.set(date, [...existingMessages, message]);
     });
+    
 
     const transformedData = Array.from(commitCountByDate.entries()).map(([label, value]) => ({
         label,
         value,
         details: commitMessages.get(label) || [],
-    })).sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime());
+    })).sort((a, b) => {
+        const dateA:Date = new Date(a.label.split('/').reverse().join('-')); // Convert to YYYY-MM-DD
+        const dateB :Date= new Date(b.label.split('/').reverse().join('-'));
+        return dateA.getTime() - dateB.getTime(); // Ascending order
+    });
+    
 
     return {
         totalCommits,

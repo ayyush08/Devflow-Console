@@ -8,8 +8,6 @@ export const getRepoData = async (repo: string) => {
 
 export const getRepoCommits = async (repo: string) => {
     const accessToken : string = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN as string
-    console.log("accessToken", accessToken);
-
     const maxCommits = Infinity
     const commits = [];
     let url: string | null = `https://api.github.com/repos/${repo}/commits?per_page=100`;

@@ -21,18 +21,18 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 
 interface ChartDataPoint {
-    label: string; // x-axis label (e.g., date, ID, category)
-    value: number; // y-axis value (e.g., commits, count, score)
-    details?: string[]; // Optional details for tooltip (e.g., messages, descriptions)
+    label: string; 
+    value: number; 
+    details?: string[]; 
 }
 
 interface CustomLineChartProps {
-    dataPoints: ChartDataPoint[]; // Array of data points
-    total?: number; // Optional total for display in label
-    title?: string; // Chart title
-    yAxisLabel?: string; // Label for y-axis data
-    borderColor?: string; // Line color
-    backgroundColor?: string; // Fill color
+    dataPoints: ChartDataPoint[]; 
+    total?: number; 
+    title?: string; 
+    yAxisLabel?: string; 
+    borderColor?: string; 
+    backgroundColor?: string;
 }
 
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
