@@ -1,4 +1,4 @@
-import { transformCommitData } from "./transformations";
+
 
 export const getRepoData = async (repo: string) => {
     const response = await fetch(`https://api.github.com/repos/${repo}`);
@@ -8,7 +8,7 @@ export const getRepoData = async (repo: string) => {
 
 export const getRepoCommits = async (repo: string) => {
     const accessToken : string = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN as string
-    const maxCommits = Infinity
+    const maxCommits = 500
     const commits = [];
     let url: string | null = `https://api.github.com/repos/${repo}/commits?per_page=100`;
 
@@ -47,8 +47,8 @@ export const getRepoCommits = async (repo: string) => {
             }
         }
 
-        const transformedData = transformCommitData(commits);
-        return transformedData;
+        
+        return commits;
     } catch (error) {
         console.error(`Error fetching commits for ${repo}:`, error);
         throw error;
