@@ -36,3 +36,5 @@ func GetPRMetrics(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dashboard)
 }
+
+

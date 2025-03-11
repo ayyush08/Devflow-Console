@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,7 +21,9 @@ func main() {
 
 	var PORT = os.Getenv("PORT")
 
-	fmt.Println("PORT: ", PORT)
+	if PORT == "" {
+		PORT = ":8080"
+	}
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -33,6 +34,7 @@ func main() {
 	api := r.Group("/api/v1")
 	{
 		routes.PRRoutes(api)
+		routes.GetResponse(api) // to be removed later
 	}
 
 	ginErr := r.Run(PORT)

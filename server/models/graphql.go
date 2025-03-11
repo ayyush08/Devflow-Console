@@ -55,7 +55,8 @@ type GraphQLResponse struct {
 				Target struct {
 					CheckSuites struct {
 						Nodes []struct {
-							Conclusion  *string `json:"conclusion"` // Nullable
+							Conclusion  *string `json:"conclusion"` 
+							Status 	*string `json:"status"`
 							WorkflowRun *struct {
 								Workflow *struct {
 									Name string `json:"name"`

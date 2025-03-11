@@ -9,6 +9,7 @@ import (
 
 	"github.com/ayyush08/keploy-dashboard/config"
 	"github.com/ayyush08/keploy-dashboard/models"
+	"github.com/ayyush08/keploy-dashboard/utils"
 )
 
 const query = `
@@ -52,9 +53,10 @@ const query = `
 			defaultBranchRef {
 				target {
 					... on Commit {
-						checkSuites(first: 10) {
+						checkSuites(first: 100) {
 							nodes {
 								conclusion
+								status
 								workflowRun {
 									workflow {
 										name
@@ -70,6 +72,12 @@ const query = `
 `
 
 func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
+
+	cacheKey := fmt.Sprintf("%s/%s", owner, repo)
+
+	if cachedMetrics, found := config.MetricsCache.Get(cacheKey); found {
+		return cachedMetrics.(models.DashboardMetrics), nil
+	}
 
 	graphQLPayload := models.GraphQLRequest{
 		Query: query,
@@ -89,7 +97,6 @@ func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 	req.Header.Set("Authorization", "Bearer "+config.GetGithubToken())
 	req.Header.Set("Content-Type", "application/json")
 
-
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
@@ -97,15 +104,14 @@ func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 	}
 
 	defer res.Body.Close()
-	
-	data,err := io.ReadAll(res.Body)
+
+	data, err := io.ReadAll(res.Body)
 
 	if err != nil {
 		return models.DashboardMetrics{}, fmt.Errorf("failed to read response body: %v", err)
 	}
 
 	var graphQLResponse models.GraphQLResponse
-
 
 	if err := json.Unmarshal(data, &graphQLResponse); err != nil {
 		return models.DashboardMetrics{}, fmt.Errorf("failed to parse GraphQL response: %v", err)
@@ -115,18 +121,12 @@ func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 		return models.DashboardMetrics{}, fmt.Errorf("GraphQL error: %v", graphQLResponse.Errors[0].Message)
 	}
 
+	var metrics models.DashboardMetrics
 
-	var transformedMetrics models.DashboardMetrics = extractMetrics(graphQLResponse)
+	metrics.PRMetrics = utils.ExtractPRMetrics(graphQLResponse)
+	metrics.RepoMetrics = utils.ExtractRepoMetrics(graphQLResponse)
+	metrics.TestMetrics = utils.ExtractTestMetrics(graphQLResponse)
 
+	return metrics, nil
 
-
-	return transformedMetrics, nil
-	
-}
-
-
-func extractMetrics(graphQLResponse models.GraphQLResponse) models.DashboardMetrics {
-	
-
-	return models.DashboardMetrics{}
 }

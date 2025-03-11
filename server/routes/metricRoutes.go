@@ -8,6 +8,7 @@ import (
 func PRRoutes(api *gin.RouterGroup){
 	metrics := api.Group("/metrics")
 	{
-		metrics.GET("/pr/:owner/:repo/*template", controllers.GetPRMetrics)
+		metrics.GET("/:owner/:repo/*template", controllers.GetPRMetrics)
+		metrics.GET("/get-gql/:owner/:repo", controllers.GetResponse)
 	}
 }
