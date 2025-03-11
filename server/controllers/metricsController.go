@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/ayyush08/keploy-dashboard/handlers"
-	"github.com/ayyush08/keploy-dashboard/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,36 +25,14 @@ func GetPRMetrics(c *gin.Context) {
 	}
 
 
-	prMetrics, err :=	 handlers.FetchPRMetrics(owner, repo)
-
+	metrics,err := handlers.FetchMetrics(owner, repo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 
-
-	testMetrics, err := handlers.FetchTestMetrics(owner, repo)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	repoMetrics, err := handlers.FetchRepoMetrics(owner, repo)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	var dashboardMetrics models.DashboardMetrics
-	dashboardMetrics.PRMetrics = prMetrics
-	dashboardMetrics.TestMetrics = testMetrics
-	dashboardMetrics.RepoMetrics = repoMetrics
-
-
-	dashboard := handlers.ApplyTemplate(template, dashboardMetrics)
+	dashboard := handlers.ApplyTemplate(template, metrics)
 
 	c.JSON(http.StatusOK, dashboard)
 }

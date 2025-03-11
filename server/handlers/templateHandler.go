@@ -25,7 +25,7 @@ func ApplyTemplate(template string, metrics models.DashboardMetrics) interface{}
 	case "manager":
 		{
 			return models.ManagerTemplate{
-				PRCount:    metrics.PRMetrics.PRCount,
+				PRCount:    metrics.PRMetrics.OpenPRCount + metrics.PRMetrics.ClosedPRCount + metrics.PRMetrics.MergedPRCount,
 				Stars:      metrics.RepoMetrics.Stars,
 				OpenIssues: metrics.RepoMetrics.OpenIssues,
 			}
