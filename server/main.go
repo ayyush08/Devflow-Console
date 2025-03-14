@@ -4,8 +4,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/ayyush08/devflow-console/routes"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -20,10 +22,21 @@ func main() {
 	r.SetTrustedProxies(nil)
 
 	var PORT = os.Getenv("PORT")
+	
+	var FRONTEND_URL = os.Getenv("FRONTEND_URL")
 
 	if PORT == "" {
 		PORT = ":8080"
 	}
+
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{FRONTEND_URL}, 
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

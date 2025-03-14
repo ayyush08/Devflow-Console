@@ -1,6 +1,6 @@
 'use client';
-import React from 'react'
-
+import React, { useMemo } from "react";
+import { Line } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     LineElement,
@@ -10,77 +10,53 @@ import {
     LinearScale,
     PointElement,
     Title,
-} from 'chart.js'
-
-import { Line } from 'react-chartjs-2'
-
+} from "chart.js";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-
-
-
-interface ChartDataPoint {
-    label: string; 
-    value: number; 
-    details?: string[]; 
-}
-
 interface CustomLineChartProps {
-    dataPoints: ChartDataPoint[]; 
-    total?: number; 
-    title?: string; 
-    yAxisLabel?: string; 
-    borderColor?: string; 
+    labels: string[];
+    values: number[];
+    title?: string;
+    yAxisLabel?: string;
+    borderColor?: string;
     backgroundColor?: string;
+    total?: number;
 }
 
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
-    dataPoints,
-    total,
+    labels,
+    values,
     title = "Data Over Time",
     yAxisLabel = "Value",
-    borderColor = "rgba(75,192,192,1)", // Default neon cyan
+    borderColor = "#4bc0c0", // Neon cyan
     backgroundColor = "rgba(75,192,192,0.2)",
+    total,
 }) => {
-
-
-    const labels = dataPoints.map((point) => point.label);
-    const values = dataPoints.map((point) => point.value);
-
-    const data = {
+    const data = useMemo(() => ({
         labels,
         datasets: [
             {
-                label: `${title}`,
+                label: title,
                 data: values,
-                borderColor: borderColor,
-                backgroundColor: backgroundColor,
+                borderColor,
+                backgroundColor,
                 tension: 0.4,
             },
         ],
+    }), [labels, values, borderColor, backgroundColor, title]);
 
-    };
-    const options = {
+    const options = useMemo(() => ({
         responsive: true,
         plugins: {
-            legend: {
-                labels: { color: "#fff" },
-                display: false
-            },
-            tooltip: { enabled: true, },
+            legend: { display: false },
+            tooltip: { enabled: true },
             title: {
-                display: true, 
-                text: total !== undefined ? `Total ${title}: ${total}  ` : '',
-                color: "#fff", 
-                font: {
-                    size: 16,
-                },
-                padding: {
-                    top: 10,
-                    bottom: 20,
-                },
-                position: "top" as const, 
+                display: !!total,
+                text: total ? `Total ${title}: ${total}` : "",
+                color: "#fff",
+                font: { size: 16 },
+                padding: { top: 10, bottom: 20 },
             },
         },
         scales: {
@@ -91,11 +67,9 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
                 title: { display: true, text: yAxisLabel, color: "#fff" },
             },
         },
-    };
+    }), [total, title, yAxisLabel]);
 
-    return (
-        <Line data={data} options={options} />
-    )
-}
+    return <Line data={data} options={options} />;
+};
 
-export default CustomLineChart
+export default CustomLineChart;

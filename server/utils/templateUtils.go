@@ -23,6 +23,9 @@ func ApplyQaTemplate(metrics models.DashboardMetrics) models.QATemplate {
 		totalTests += count
 	}
 
+	qaResponse.TestSuites = append(qaResponse.TestSuites, metrics.TestMetrics.TestSuites...)
+
+
 	qaResponse.PassRate = float64(passedTests) / float64(totalTests)
 
 	qaResponse.Rejected = failedTest

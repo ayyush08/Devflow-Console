@@ -11,6 +11,7 @@ type QATemplate struct {
 	Rejected    int     `json:"rejected"`
 	Conclusions map[TestConclusion]int `json:"conclusions"` 
 	PassRate    float64 `json:"pass_rate"`
+	TestSuites []TestSuite`json:"test_suites,omitempty"`
 }
 
 type ManagerTemplate struct {
