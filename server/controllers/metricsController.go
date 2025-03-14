@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/ayyush08/keploy-dashboard/handlers"
+	"github.com/ayyush08/devflow-console/handlers"
 	"github.com/gin-gonic/gin"
 )
 

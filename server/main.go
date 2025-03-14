@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ayyush08/keploy-dashboard/routes"
+	"github.com/ayyush08/devflow-console/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )

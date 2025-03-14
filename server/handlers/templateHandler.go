@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/ayyush08/keploy-dashboard/models"
-	"github.com/ayyush08/keploy-dashboard/utils"
+	"github.com/ayyush08/devflow-console/models"
+	"github.com/ayyush08/devflow-console/utils"
 )
 
 func ApplyTemplate(template string, metrics models.DashboardMetrics) interface{} {

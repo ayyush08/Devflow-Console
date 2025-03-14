@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/ayyush08/keploy-dashboard/models"
+import "github.com/ayyush08/devflow-console/models"
 
 func ApplyQaTemplate(metrics models.DashboardMetrics) models.QATemplate {
 

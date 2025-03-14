@@ -3,7 +3,7 @@ package utils
 import (
 	"time"
 
-	"github.com/ayyush08/keploy-dashboard/models"
+	"github.com/ayyush08/devflow-console/models"
 )
 
 func ExtractPRMetrics(graphQLResponse models.GraphQLResponse) models.PRMetrics {

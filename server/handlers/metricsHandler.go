@@ -7,9 +7,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/ayyush08/keploy-dashboard/config"
-	"github.com/ayyush08/keploy-dashboard/models"
-	"github.com/ayyush08/keploy-dashboard/utils"
+	"github.com/ayyush08/devflow-console/config"
+	"github.com/ayyush08/devflow-console/models"
+	"github.com/ayyush08/devflow-console/utils"
 )
 
 const query = `
