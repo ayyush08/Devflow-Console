@@ -7,6 +7,7 @@ import ChartLoader from "@/components/loaders/ChartLoader";
 import { useGetMetrics } from "@/hooks/metricHooks";
 import CustomAreaChart from "@/components/charts/CustomAreaChart";
 import CustomLineChart from "@/components/charts/CustomLineChart";
+import CustomPieChart from "@/components/charts/CustomPieChart";
 
 const sample = [
     { time: "00:00", requests: 120, errors: 5 },
@@ -26,6 +27,14 @@ const sampleCommits = [
     { time: "04:00", commits: 7 },
     { time: "05:00", commits: 15 },
     { time: "06:00", commits: 10 },
+];
+
+const samplePieData = [
+    { name: "Alice", value: 40 },
+    { name: "Bob", value: 25 },
+    { name: "Charlie", value: 15 },
+    { name: "David", value: 10 },
+    { name: "Eve", value: 10 },
 ];
 
 
@@ -142,6 +151,15 @@ export default function Dashboard() {
                                     tooltipColor="red"
                                     lineColor="cyan"
                                 />
+                            </div>
+                            <div className="w-full h-96 md:h-[28rem] flex justify-center items-center">
+                                    <CustomPieChart
+                                    dataPoints={samplePieData}
+                                    key={role}
+                                    title="Contributions"
+                                    tooltipBackgroundColor="blue"
+                                    tooltipColor="white"
+                                    />
                             </div>
                         </div>
                     )}
