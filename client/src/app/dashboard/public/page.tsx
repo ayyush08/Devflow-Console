@@ -6,6 +6,7 @@ import { BackgroundLines } from "@/components/ui/background-lines";
 import ChartLoader from "@/components/loaders/ChartLoader";
 import { useGetMetrics } from "@/hooks/metricHooks";
 import CustomAreaChart from "@/components/charts/CustomAreaChart";
+import CustomLineChart from "@/components/charts/CustomLineChart";
 
 const sample = [
     { time: "00:00", requests: 120, errors: 5 },
@@ -16,6 +17,17 @@ const sample = [
     { time: "05:00", requests: 230, errors: 8 },
     { time: "06:00", requests: 180, errors: 4 },
 ];
+
+const sampleCommits = [
+    { time: "00:00", commits: 5 },
+    { time: "01:00", commits: 8 },
+    { time: "02:00", commits: 3 },
+    { time: "03:00", commits: 12 },
+    { time: "04:00", commits: 7 },
+    { time: "05:00", commits: 15 },
+    { time: "06:00", commits: 10 },
+];
+
 
 type Role = "developer" | "qa" | "manager";
 
@@ -122,7 +134,14 @@ export default function Dashboard() {
                                 />
                             </div>
                             <div className="w-full h-96 md:h-[28rem] flex justify-center items-center">
-                               
+                                <CustomLineChart
+                                    data={sampleCommits}
+                                    title="Commits Over Time"
+                                    yAxisLabel="Commits"
+                                    tooltipBackgroundColor="black"
+                                    tooltipColor="red"
+                                    lineColor="cyan"
+                                />
                             </div>
                         </div>
                     )}
