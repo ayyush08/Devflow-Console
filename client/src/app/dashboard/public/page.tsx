@@ -1,14 +1,23 @@
 "use client";
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import { BackgroundLines } from "@/components/ui/background-lines";
-import CustomLineChart from "@/components/charts/CustomLineChart";
 
 import ChartLoader from "@/components/loaders/ChartLoader";
-import CustomPieChart from "@/components/charts/CustomPieChart";
 import { useGetMetrics } from "@/hooks/metricHooks";
+import CustomAreaChart from "@/components/charts/CustomAreaChart";
 
+const sample = [
+    { time: "00:00", requests: 120, errors: 5 },
+    { time: "01:00", requests: 150, errors: 7 },
+    { time: "02:00", requests: 90, errors: 3 },
+    { time: "03:00", requests: 170, errors: 6 },
+    { time: "04:00", requests: 200, errors: 10 },
+    { time: "05:00", requests: 230, errors: 8 },
+    { time: "06:00", requests: 180, errors: 4 },
+];
 
+type Role = "developer" | "qa" | "manager";
 
 const placeholders = [
     "Enter user/repository name (e.g., facebook/react)"
@@ -33,9 +42,15 @@ export default function Dashboard() {
         role,
     });
 
-    if(data){
+    if (data) {
         console.log(data)
     }
+
+
+    useEffect(() => {
+        console.log("Role changed to", role);
+
+    }, [role]);
 
 
     if (error) {
@@ -73,14 +88,14 @@ export default function Dashboard() {
                     />
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto py-8">
+                <div className="flex flex-col z-50 items-center justify-center w-full max-w-7xl mx-auto py-8">
                     {/* 🔥 Role Switcher */}
                     <div className="flex gap-4 mb-4">
                         {["developer", "qa", "manager"].map((r) => (
                             <button
                                 key={r}
-                                onClick={() => setRole(r as "developer" | "qa" | "manager")}
-                                className={`px-4 py-2 border rounded ${role === r ? "bg-blue-500 text-white" : "bg-gray-300"}`}
+                                onClick={() => setRole((prev) => (prev === r ? prev : (r as Role)))}
+                                className={`px-4 py-2 border rounded ${role === r ? "bg-blue-500 text-white dark:text-black" : "bg-gray-600"}`}
                             >
                                 {r.toUpperCase()}
                             </button>
@@ -92,23 +107,22 @@ export default function Dashboard() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                             <div className="w-full h-96 md:h-[28rem] flex justify-center items-center">
-                                <CustomLineChart
-                                    // dataPoints={data?.lineDataPoints || []}
-                                    labels={["data.labels"]}
-                                    values={[2]}
-                                    total={43}
-                                    title="Commits Over Time"
-                                    yAxisLabel="Commits"
-                                    backgroundColor="purple"
-                                    borderColor="cyan"
+                                <CustomAreaChart
+                                    data={sample}
+                                    xKey="time"
+                                    yKeys={[
+                                        { key: "requests", color: "green" },
+                                        { key: "errors", color: "#ff0000" },
+                                    ]}
+                                    xAxisFill="cyan"
+                                    yAxisFill="cyan"
+                                    strokeColor="white"
+                                    tooltipBackgroundColor="black"
+                                    tooltipColor="red"
                                 />
                             </div>
                             <div className="w-full h-96 md:h-[28rem] flex justify-center items-center">
-                                <CustomPieChart
-                                    dataPoints={[]}
-                                    total={2}
-                                    title="Commits by Author"
-                                />
+                               
                             </div>
                         </div>
                     )}
