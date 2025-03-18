@@ -9,67 +9,12 @@ import (
 
 	"github.com/ayyush08/devflow-console/config"
 	"github.com/ayyush08/devflow-console/models"
+	"github.com/ayyush08/devflow-console/queries"
 	"github.com/ayyush08/devflow-console/utils"
 )
 
-const query = `
-	query Metrics($owner: String!, $name: String!) {
-		repository(owner: $owner, name: $name) {
-			stargazerCount
-			forkCount
-			openIssues: issues(states: OPEN) {
-				totalCount
-			}
-			closedIssues: issues(states: CLOSED) {
-				totalCount
-			}
-			updatedAt
-			createdAt
 
-			openPRs: pullRequests(states: OPEN, first: 100) {
-				totalCount
-				nodes{
-					title
-					createdAt
-				}
-			}
-			closedPRs: pullRequests(states: CLOSED, first: 100) {
-				totalCount
-				nodes {
-					title
-					createdAt
-					closedAt
-				}
-			}
-			mergedPRs: pullRequests(states: MERGED, first: 100) {
-				totalCount
-				nodes {
-					title
-					createdAt
-					mergedAt
-				}
-			}
 
-			defaultBranchRef {
-				target {
-					... on Commit {
-						checkSuites(first: 100) {
-							nodes {
-								conclusion
-								status
-								workflowRun {
-									workflow {
-										name
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-`
 
 func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 
@@ -80,7 +25,7 @@ func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 	}
 
 	graphQLPayload := models.GraphQLRequest{
-		Query: query,
+		Query: queries.MetricsQuery,
 		Variables: map[string]string{
 			"owner": owner,
 			"name":  repo,

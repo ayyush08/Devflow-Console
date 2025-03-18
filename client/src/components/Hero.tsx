@@ -11,6 +11,7 @@ export function Hero() {
             <p className="max-w-xl mx-auto text-sm md:text-lg text-neutral-700 dark:text-neutral-400 text-center">
             Monitor your repositories, analyze test results, and gain valuable insights with interactive visualizations.
             </p>
+            
         </BackgroundLines>
     );
 }

@@ -110,7 +110,6 @@ export default function Dashboard() {
                 </div>
             ) : (
                 <div className="flex flex-col z-50 items-center justify-center w-full max-w-7xl mx-auto py-8">
-                    {/* 🔥 Role Switcher */}
                     <div className="flex gap-4 mb-4">
                         {["developer", "qa", "manager"].map((r) => (
                             <button
