@@ -1,7 +1,8 @@
 'use client';
 import Dashboard from '@/components/Dashboard';
-import { Button } from '@/components/ui/button';
+
 import { PlaceholdersAndVanishInput } from '@/components/ui/placeholders-and-vanish-input';
+
 import React, { useState } from 'react'
 
 
@@ -19,8 +20,10 @@ const placeholders = [
 // type Role = "developer" | "qa" | "manager";
 
 const MetricsDashboard = () => {
-    const [repo, setRepo] = useState<string>('ayush');
-    // const [role, setRole] = useState<Role>("developer");
+    const [repo, setRepo] = useState<string>('');
+
+    const [repoOwner, setRepoOwner] = useState<string | null>(null);
+    const [repoName, setRepoName] = useState<string | null>(null);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
     };
@@ -28,11 +31,20 @@ const MetricsDashboard = () => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const repoValue = formData.get("repo") as string;
-        setRepo(repoValue);
+        if (repoValue.includes('/')) {
+            const [owner, name] = repoValue.split('/');
+            setRepoOwner(owner);
+            setRepoName(name);
+            setRepo(repoValue);
+        } else {
+            alert("Invalid repository format. Use owner/repo.");
+        }
     };
+
+
     return (
         <div className='flex flex-col justify-center items-center px-4 min-h-screen'>
-          
+
             {repo === "" ? (
                 <div className="flex flex-col justify-center items-center px-4">
                     <h2 className="text-lg md:text-2xl lg:text-6xl font-sans bg-gradient-to-b text-transparent bg-clip-text from-orange-500 to-teal-400 py-2 md:py-10 font-bold">
@@ -48,13 +60,10 @@ const MetricsDashboard = () => {
                 </div>
             ) :
                 (
-                    <div className="w-full">
-                        <Button variant={'secondary'} className='bg-slate-400/30 text-white hover:bg-slate-300 z-20 hover:text-black font-semibold px-4 absolute top-5 right-5' onClick={() => setRepo('')}>
-                            Reset
-                        </Button>
-                        <Dashboard repo={repo} />
-                    </div>
-                )}
+
+                    <Dashboard repoName={repoName} repoOwner={repoOwner} setRepo={setRepo} />
+                )
+            }
         </div>
     )
 }

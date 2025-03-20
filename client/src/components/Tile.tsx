@@ -20,7 +20,7 @@ const Tile = ({
     icon
 }:TileProps) => {
     return (
-        <Card className="bg-transparent shadow-md shadow-slate-500 ">
+        <Card className="bg-transparent shadow-md shadow-slate-500 font-mono">
             <CardHeader className="bg-transparent">
                 <div className="flex gap-5  items-center justify-between text-white">
                 <CardTitle className="text-md font-bold tracking-tight text-gray-200">{title}</CardTitle>

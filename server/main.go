@@ -22,18 +22,20 @@ func main() {
 	r.SetTrustedProxies(nil)
 
 	var PORT = os.Getenv("PORT")
-	
+
 	var FRONTEND_URL = os.Getenv("FRONTEND_URL")
 
 	if PORT == "" {
 		PORT = ":8080"
 	}
 
+	log.Println("Frontend URL: ", FRONTEND_URL)
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{FRONTEND_URL}, 
+		AllowOrigins:     []string{"http://localhost:3000"}, // Ensure it's correctly set
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))

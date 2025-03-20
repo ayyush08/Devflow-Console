@@ -2,19 +2,23 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 
-const BACKEND_URL =  process.env.NEXT_PUBLIC_BACKEND_URL
+const BACKEND_URL =  process.env.NEXT_PUBLIC_BACKEND_URL 
 
+console.log("BACKEND_URL", BACKEND_URL);
 
 const axiosInstance = axios.create({
     baseURL: BACKEND_URL,
     withCredentials: true,
+    headers:{
+        'Content-Type': 'application/json',
+    }
 });
 
 
 interface ApiParams {
-    owner: string;
-    repo: string;
-    role: "developer" | "qa" | "manager";
+    owner: string | null;
+    repo: string | null;
+    role?: "developer" | "qa" | "manager" | "general" ;
 }
 
 export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
@@ -23,9 +27,11 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!owner || !repo || !role) return;
+        if (!owner || !repo) return;
 
         const fetchMetrics = async () => {
+            console.log("Fetching metrics...");
+            
             setLoading(true);
             setError(null);
             try {
@@ -36,6 +42,9 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
                     endpoint += "/qa";
                 } else if (role === "manager") {
                     endpoint += "/manager";
+                }
+                else{
+                    endpoint += "/"
                 }
 
                 const response = await axiosInstance.get(endpoint);
@@ -49,7 +58,7 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
         };
 
         fetchMetrics();
-    }, [owner, repo, role]); 
+    }, [owner, repo]); 
 
     return { data, loading, error };
 };
