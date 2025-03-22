@@ -13,26 +13,29 @@ import (
 )
 
 func main() {
+	log.SetOutput(os.Stdout)
+	gin.DefaultWriter = os.Stdout
+	gin.DefaultErrorWriter = os.Stderr
 
+	log.Println("Starting server setup...")
 	if err := godotenv.Load(); err != nil {
 		log.Println("Warning: Could not load .env file:", err)
 	}
 
+	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
-
 	var PORT = os.Getenv("PORT")
 
 	var FRONTEND_URL = os.Getenv("FRONTEND_URL")
 
 	if PORT == "" {
 		PORT = ":8080"
+		log.Println("PORT not found in .env, using default:", PORT)
 	}
 
-	log.Println("Frontend URL: ", FRONTEND_URL)
-
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // Ensure it's correctly set
+		AllowOrigins:     []string{FRONTEND_URL}, // Ensure it's correctly set
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -48,14 +51,13 @@ func main() {
 
 	api := r.Group("/api/v1")
 	{
-		routes.PRRoutes(api)
-		routes.GetResponse(api) // to be removed later
+		routes.MetricRoutes(api)
 	}
 
-	ginErr := r.Run(PORT)
+	log.Println("Starting server on", PORT)
 
-	if ginErr != nil {
-		log.Fatal("Error starting gin: ", ginErr)
+	if err := r.Run(PORT); err != nil {
+		log.Fatal("Error starting Gin server: ", err)
 	}
 
 }

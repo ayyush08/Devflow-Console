@@ -6,18 +6,11 @@ import { PlaceholdersAndVanishInput } from '@/components/ui/placeholders-and-van
 import React, { useState } from 'react'
 
 
-// const sampleTileData = [
-//     { title: "Total Stars", value: 1000, icon: <StarIcon /> },
-//     { title: "Total Commits", value: 500, icon: <GitCommitIcon /> },
-//     { title: "Total PRs", value: 350, icon: <GitPullRequest /> },
-//     { title: "Total Issues", value: 200, icon: <Bug /> },
-// ]
 
 const placeholders = [
     "Enter user/repository name (e.g., facebook/react)"
 ];
 
-// type Role = "developer" | "qa" | "manager";
 
 const MetricsDashboard = () => {
     const [repo, setRepo] = useState<string>('');

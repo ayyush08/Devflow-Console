@@ -8,3 +8,7 @@ node_modules
 dumps
 
 tests.go
+
+tmp
+
+*.air.toml

@@ -13,3 +13,5 @@ func GetGithubToken() string {
 
 
 var MetricsCache = cache.New(10*time.Minute,15*time.Minute)
+
+var GeneralMetricsCache = cache.New(10*time.Minute,15*time.Minute)

@@ -13,7 +13,68 @@ type GraphQLRequest struct {
 
 
 
-
+type GeneralMetricsGraphQLResponse struct {
+    Data struct {
+        Repository struct {
+            StargazerCount int `json:"stargazerCount"`
+            Issues         struct {
+                TotalCount int `json:"totalCount"`
+            } `json:"issues"`
+            PullRequests struct {
+                TotalCount int `json:"totalCount"`
+                Edges      []struct {
+                    Node struct {
+                        CreatedAt string `json:"createdAt"`
+                    } `json:"node"`
+                } `json:"edges"`
+            } `json:"pullRequests"`
+			TotalCommits struct {
+				Target struct {
+					History struct {
+						TotalCount int `json:"totalCount"`
+					} `json:"history"`
+				} `json:"target"`
+			} `json:"totalCommits"`
+            RecentCommits struct {
+                Target struct {
+                    History struct {
+                        TotalCount int `json:"totalCount"`
+                        Edges      []struct {
+                            Node struct {
+                                CommittedDate string `json:"committedDate"`
+                            } `json:"node"`
+                        } `json:"edges"`
+                    } `json:"history"`
+                } `json:"target"`
+            } `json:"recentCommits"`
+            MergedPRs struct {
+                TotalCount int `json:"totalCount"`
+            } `json:"mergedPRs"`
+            ClosedPRs struct {
+                TotalCount int `json:"totalCount"`
+            } `json:"closedPRs"`
+            OpenPRs struct {
+                TotalCount int `json:"totalCount"`
+            } `json:"openPRs"`
+            BarData struct {
+                Target struct {
+                    History struct {
+                        Edges []struct {
+                            Node struct {
+                                CommittedDate string `json:"committedDate"`
+                                Additions     int    `json:"additions"`
+                                Deletions     int    `json:"deletions"`
+                            } `json:"node"`
+                        } `json:"edges"`
+                    } `json:"history"`
+                } `json:"target"`
+            } `json:"barData"`
+        } `json:"repository"`
+    } `json:"data"`
+	Errors []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
+}
 
 type GraphQLResponse struct {
 	Data struct {
@@ -70,5 +131,5 @@ type GraphQLResponse struct {
 	} `json:"data"`
 	Errors []struct {
 		Message string `json:"message"`
-	}
+	} `json:"errors"`
 }

@@ -61,3 +61,32 @@ type TestMetrics struct {
 	Conclusions  map[TestConclusion]int `json:"conclusions"`
 	TestSuites   []TestSuite  `json:"testSuites,omitempty"`
 }
+
+
+type AreaGraphData struct {
+	Date string `json:"date"`
+	Commits int `json:"commits"`
+	PullRequests int `json:"pullRequests"`
+}
+
+type BarGraphData struct {
+	Month string `json:"month"`
+	Additions int `json:"additions"`
+	Deletions int `json:"deletions"`
+}
+
+type DonutChartData struct {
+	MergedPRs int `json:"mergedPRs"`
+	ClosedPRs int `json:"closedPRs"`
+	OpenPRs int `json:"openPRs"`
+}
+
+type GeneralMetrics struct {
+	TotalPRs int `json:"totalPRs"`
+	TotalCommits int `json:"totalCommits"`
+	TotalIssues int `json:"totalIssues"`
+	TotalStars int `json:"totalStars"`
+	AreaGraphData []AreaGraphData `json:"areaGraphData"`
+	BarGraphData []BarGraphData `json:"barGraphData"`
+	DonutChartData DonutChartData `json:"donutChartData"`
+}

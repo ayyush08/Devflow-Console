@@ -5,16 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/ayyush08/devflow-console/config"
 	"github.com/ayyush08/devflow-console/models"
 	"github.com/ayyush08/devflow-console/queries"
 	"github.com/ayyush08/devflow-console/utils"
 )
-
-
-
 
 func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 
@@ -72,6 +71,100 @@ func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 	metrics.RepoMetrics = utils.ExtractRepoMetrics(graphQLResponse)
 	metrics.TestMetrics = utils.ExtractTestMetrics(graphQLResponse)
 
+	config.MetricsCache.Set(cacheKey, metrics, 0)
+
 	return metrics, nil
 
+}
+
+func FetchGeneralMetrics(owner string, repo string) (models.GeneralMetrics, error) {
+	cacheKey := fmt.Sprintf("%s/%s", owner, repo)
+
+	if cachedMetrics, found := config.MetricsCache.Get(cacheKey); found {
+		return cachedMetrics.(models.GeneralMetrics), nil
+	}
+
+	since := time.Now().AddDate(0, 0, -30).UTC().Format(time.RFC3339)
+
+	log.Println("Since:", since)
+
+	graphQLPayload := models.GraphQLRequest{
+		Query: queries.GeneralMetricsQuery,
+		Variables: map[string]string{
+			"owner": owner,
+			"repo":  repo,
+			"since": since,
+		},
+	}
+
+	jsonPayload, err := json.Marshal(graphQLPayload)
+
+	if err != nil {
+		return models.GeneralMetrics{}, fmt.Errorf("error marshalling graphql payload: %v", err)
+	}
+
+	req, _ := http.NewRequest("POST", "https://api.github.com/graphql", bytes.NewBuffer(jsonPayload))
+	req.Header.Set("Authorization", "Bearer "+config.GetGithubToken())
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return models.GeneralMetrics{}, fmt.Errorf("failed to fetch general metrics: %v", err)
+	}
+
+	defer res.Body.Close()
+
+	data, err := io.ReadAll(res.Body)
+
+	if err != nil {
+		return models.GeneralMetrics{}, fmt.Errorf("failed to read response body: %v", err)
+	}
+
+	var graphQLResponse models.GeneralMetricsGraphQLResponse
+
+	if err := json.Unmarshal(data, &graphQLResponse); err != nil {
+		return models.GeneralMetrics{}, fmt.Errorf("failed to parse GraphQL response: %v", err)
+	}
+
+	if len(graphQLResponse.Errors) > 0 {
+		return models.GeneralMetrics{}, fmt.Errorf("GraphQL error: %v", graphQLResponse.Errors[0].Message)
+	}
+
+	var generalMetrics models.GeneralMetrics
+
+	repoData := graphQLResponse.Data.Repository
+
+	generalMetrics.TotalCommits = repoData.TotalCommits.Target.History.TotalCount
+	generalMetrics.TotalIssues = repoData.Issues.TotalCount
+	generalMetrics.TotalPRs = repoData.PullRequests.TotalCount
+	generalMetrics.TotalStars = repoData.StargazerCount
+
+	prs := repoData.PullRequests.Edges
+	commits := repoData.RecentCommits.Target.History.Edges
+
+	var prTimestamps []models.PRNode
+	for _, edge := range prs {
+		prTimestamps = append(prTimestamps, models.PRNode{CreatedAt: edge.Node.CreatedAt})
+	}
+
+	var commitTimestamps []models.CommitNode
+	for _, edge := range commits {
+		commitTimestamps = append(commitTimestamps, models.CommitNode{CommittedDate: edge.Node.CommittedDate})
+	}
+
+	generalMetrics.AreaGraphData = utils.GenerateAreaGraphData(prTimestamps, commitTimestamps)
+
+	generalMetrics.DonutChartData.ClosedPRs = repoData.ClosedPRs.TotalCount
+	generalMetrics.DonutChartData.MergedPRs = repoData.MergedPRs.TotalCount
+	generalMetrics.DonutChartData.OpenPRs = repoData.OpenPRs.TotalCount
+
+	barData := repoData.BarData.Target.History.Edges
+
+	generalMetrics.BarGraphData = utils.GenerateBarGraphData(barData)
+
+	config.MetricsCache.Set(cacheKey, generalMetrics, 0)
+
+	return generalMetrics, nil
 }
