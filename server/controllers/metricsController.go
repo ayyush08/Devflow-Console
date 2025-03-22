@@ -25,7 +25,7 @@ func GetTemplatizedMetrics(c *gin.Context) {
 	}
 
 
-	metrics,err := handlers.FetchMetrics(owner, repo)
+	metrics,err := handlers.FetchMetrics(owner, repo, template)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

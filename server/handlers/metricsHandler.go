@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
 
@@ -15,13 +14,24 @@ import (
 	"github.com/ayyush08/devflow-console/utils"
 )
 
-func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
+func FetchMetrics(owner string, repo string, template string) (models.DashboardMetrics, error) {
 
-	cacheKey := fmt.Sprintf("%s/%s", owner, repo)
+	cacheKey := fmt.Sprintf("metrics/%s/%s/%s", template, owner, repo)
 
-	if cachedMetrics, found := config.MetricsCache.Get(cacheKey); found {
-		return cachedMetrics.(models.DashboardMetrics), nil
+	if cachedItem, found := config.GlobalCache.Get(cacheKey); found {
+		item, ok := cachedItem.(config.MetricsCacheItem)
+		if !ok || item.Type != "template" {
+			return models.DashboardMetrics{}, fmt.Errorf("cache type mismatch: expected dashboard, got %T", cachedItem)
+		}
+	
+		metrics, ok := item.Value.(*models.DashboardMetrics) // Use pointer type assertion
+		if !ok {
+			return models.DashboardMetrics{}, fmt.Errorf("cache value type mismatch")
+		}
+	
+		return *metrics, nil // Dereference before returning
 	}
+	
 
 	graphQLPayload := models.GraphQLRequest{
 		Query: queries.MetricsQuery,
@@ -71,22 +81,38 @@ func FetchMetrics(owner string, repo string) (models.DashboardMetrics, error) {
 	metrics.RepoMetrics = utils.ExtractRepoMetrics(graphQLResponse)
 	metrics.TestMetrics = utils.ExtractTestMetrics(graphQLResponse)
 
-	config.MetricsCache.Set(cacheKey, metrics, 0)
+	cacheItem := config.MetricsCacheItem{
+		Type:  "template",
+		Value: &metrics,
+	}
+
+	config.GlobalCache.Set(cacheKey, cacheItem, 0)
 
 	return metrics, nil
 
 }
 
 func FetchGeneralMetrics(owner string, repo string) (models.GeneralMetrics, error) {
-	cacheKey := fmt.Sprintf("%s/%s", owner, repo)
+	cacheKey := fmt.Sprintf("general/%s/%s", owner, repo)
 
-	if cachedMetrics, found := config.MetricsCache.Get(cacheKey); found {
-		return cachedMetrics.(models.GeneralMetrics), nil
+	
+
+	if cachedItem, found := config.GlobalCache.Get(cacheKey); found {
+		item, ok := cachedItem.(config.MetricsCacheItem)
+		if !ok || item.Type != "general" {
+			return models.GeneralMetrics{}, fmt.Errorf("cache type mismatch: expected general, got %T", cachedItem)
+		}
+	
+		generalMetrics, ok := item.Value.(*models.GeneralMetrics) // Use pointer type assertion
+		if !ok {
+			return models.GeneralMetrics{}, fmt.Errorf("cache value type mismatch")
+		}
+	
+		return *generalMetrics, nil // Dereference before returning
 	}
+	
 
 	since := time.Now().AddDate(0, 0, -30).UTC().Format(time.RFC3339)
-
-	log.Println("Since:", since)
 
 	graphQLPayload := models.GraphQLRequest{
 		Query: queries.GeneralMetricsQuery,
@@ -164,7 +190,13 @@ func FetchGeneralMetrics(owner string, repo string) (models.GeneralMetrics, erro
 
 	generalMetrics.BarGraphData = utils.GenerateBarGraphData(barData)
 
-	config.MetricsCache.Set(cacheKey, generalMetrics, 0)
+
+	cacheItem := config.MetricsCacheItem{
+		Type:  "general",
+		Value: &generalMetrics,
+	}
+
+	config.GlobalCache.Set(cacheKey, cacheItem, 0)
 
 	return generalMetrics, nil
 }

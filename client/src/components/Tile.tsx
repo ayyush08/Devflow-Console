@@ -4,21 +4,18 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { TilePropsType } from "@/utils/type"
 
 
 
 
-interface TileProps {
-    title: string;
-    value: number;
-    icon: React.ReactNode;
-}
+
 
 const Tile = ({
     title,
     value,
     icon
-}:TileProps) => {
+}:TilePropsType) => {
     return (
         <Card className="bg-transparent shadow-md shadow-slate-500 font-mono">
             <CardHeader className="bg-transparent">

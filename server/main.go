@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
+	"github.com/ayyush08/devflow-console/middlewares"
 	"github.com/ayyush08/devflow-console/routes"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
 )
 
 func main() {
@@ -25,23 +25,21 @@ func main() {
 	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
-	var PORT = os.Getenv("PORT")
 
-	var FRONTEND_URL = os.Getenv("FRONTEND_URL")
+	FRONTEND_URL, exists := os.LookupEnv("FRONTEND_URL")
+	if !exists {
+		log.Println("FRONTEND_URL not found, using default")
+		FRONTEND_URL = "http://localhost:3000"
+	}
+
+	r.Use(middlewares.CorsMiddleware(FRONTEND_URL))
+	var PORT = os.Getenv("PORT")
 
 	if PORT == "" {
 		PORT = ":8080"
 		log.Println("PORT not found in .env, using default:", PORT)
 	}
 
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{FRONTEND_URL}, // Ensure it's correctly set
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

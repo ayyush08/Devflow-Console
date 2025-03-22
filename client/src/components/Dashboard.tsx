@@ -49,7 +49,7 @@ const Dashboard = ({
         if (repoOwner && repoName) {
             console.log("Fetching metrics for:", repoOwner, repoName);
         }
-    }, [repoOwner, repoName]);
+    }, [setRepo]);
 
     const { data, loading, error } = useGetMetrics({
         owner: repoOwner || '',
@@ -57,13 +57,16 @@ const Dashboard = ({
         role: template
     });
 
+    
+    
     useEffect(() => {
+        console.log("Current template:", template);
         if (data) {
             setMetrics(data);
         }
-    }, [data]);
+        if(metrics) console.log("Fetched data:", metrics);
+    }, [metrics]);
 
-    console.log("Fetched data:", metrics);
 
     if (error) {
         return <div>{error}</div>

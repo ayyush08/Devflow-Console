@@ -1,5 +1,6 @@
+import { processGeneralMetrics } from '@/utils/transformations';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import{ useEffect, useState } from 'react';
 
 
 const BACKEND_URL =  process.env.NEXT_PUBLIC_BACKEND_URL 
@@ -9,9 +10,6 @@ console.log("BACKEND_URL", BACKEND_URL);
 const axiosInstance = axios.create({
     baseURL: BACKEND_URL,
     withCredentials: true,
-    headers:{
-        'Content-Type': 'application/json',
-    }
 });
 
 
@@ -29,13 +27,14 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
     useEffect(() => {
         if (!owner || !repo) return;
 
+        let endpoint = role === "general" ? `/api/v1/metrics/general/${owner}/${repo}` : `/api/v1/metrics/${owner}/${repo}`;
+
         const fetchMetrics = async () => {
             console.log("Fetching metrics...");
             
             setLoading(true);
             setError(null);
             try {
-                let endpoint = `/api/v1/metrics/${owner}/${repo}`;
                 if (role === "developer") {
                     endpoint += "/developer";
                 } else if (role === "qa") {
@@ -44,7 +43,7 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
                     endpoint += "/manager";
                 }
                 else{
-                    endpoint += "/"
+                    endpoint += ""
                 }
 
                 const response = await axiosInstance.get(endpoint);
@@ -58,7 +57,23 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
         };
 
         fetchMetrics();
-    }, [owner, repo]); 
+    }, [owner, repo, role]); 
+
+    
+
+    if(role === "general"){
+        console.log(data);
+        
+        const generalMetrics = processGeneralMetrics(data);
+        return { generalMetrics, loading, error };
+    }
+
+    console.log("returning data:", data);
+    
 
     return { data, loading, error };
 };
+
+
+
+
