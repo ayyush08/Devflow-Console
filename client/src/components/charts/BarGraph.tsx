@@ -15,27 +15,38 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
-]
+import { useMemo } from "react";
 
-const chartConfig = {
-    desktop: {
-        label: "Desktop",
-        color: "hsl(var(--chart-1))",
-    },
-    mobile: {
-        label: "Mobile",
-        color: "hsl(var(--chart-2))",
-    },
-} satisfies ChartConfig
 
-export function BarGraph() {
+
+
+export function BarGraph(
+    { chartData }: { chartData: any[] }
+) {
+
+    const keys = useMemo(() => {
+        return Object.keys(chartData?.[0] || {}).filter((key) => key !== "month");
+    }, [chartData]);
+
+    
+    
+    const chartConfig = useMemo(() => {
+        return keys.reduce((config, key, index) => {
+            config[key] = {
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                color: `hsl(var(--chart-${index + 1}))`,
+            };
+            return config;
+        }, {} as ChartConfig);
+    }, [keys]);
+    
+    if (!chartData || chartData.length === 0) return null;
+
+    console.log("BarGraph data:", chartData);
+
+
+
+
     return (
         <Card className="text-white bg-transparent w-full border-none">
             <CardHeader className="text-center">

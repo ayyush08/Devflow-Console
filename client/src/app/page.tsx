@@ -13,7 +13,7 @@ const placeholders = [
 
 
 const MetricsDashboard = () => {
-    const [repo, setRepo] = useState<string>('');
+    const [repo, setRepo] = useState<string>("");
 
     const [repoOwner, setRepoOwner] = useState<string | null>(null);
     const [repoName, setRepoName] = useState<string | null>(null);

@@ -162,10 +162,10 @@ func FetchGeneralMetrics(owner string, repo string) (models.GeneralMetrics, erro
 
 	repoData := graphQLResponse.Data.Repository
 
-	generalMetrics.TotalCommits = repoData.TotalCommits.Target.History.TotalCount
-	generalMetrics.TotalIssues = repoData.Issues.TotalCount
-	generalMetrics.TotalPRs = repoData.PullRequests.TotalCount
-	generalMetrics.TotalStars = repoData.StargazerCount
+	generalMetrics.TileData.TotalCommits = repoData.TotalCommits.Target.History.TotalCount
+	generalMetrics.TileData.TotalIssues = repoData.Issues.TotalCount
+	generalMetrics.TileData.TotalPRs = repoData.PullRequests.TotalCount
+	generalMetrics.TileData.TotalStars = repoData.StargazerCount
 
 	prs := repoData.PullRequests.Edges
 	commits := repoData.RecentCommits.Target.History.Edges

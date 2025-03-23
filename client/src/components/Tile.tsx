@@ -16,6 +16,10 @@ const Tile = ({
     value,
     icon
 }:TilePropsType) => {
+
+
+    
+
     return (
         <Card className="bg-transparent shadow-md shadow-slate-500 font-mono">
             <CardHeader className="bg-transparent">

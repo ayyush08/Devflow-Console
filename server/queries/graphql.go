@@ -71,7 +71,7 @@ query RepoStats($owner: String!, $repo: String!, $since: GitTimestamp!) {
     issues {
         totalCount
     }
-    pullRequests(first: 100) {
+    pullRequests(first: 100,orderBy: {field: CREATED_AT, direction: DESC}) {
         totalCount
         edges {
         node {

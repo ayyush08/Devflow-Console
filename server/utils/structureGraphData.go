@@ -35,6 +35,12 @@ func GenerateAreaGraphData(prTimestamps []models.PRNode, commitTimestamps []mode
 		result = append(result, v)
 	}
 
+	sort.Slice(result, func(i, j int) bool {
+		t1, _ := time.Parse("2006-01-02", result[i].Date)
+		t2, _ := time.Parse("2006-01-02", result[j].Date)
+		return t1.After(t2) // Sort in descending order
+	})
+
 	return result
 }
 
@@ -52,7 +58,7 @@ func GenerateBarGraphData(commits []struct {
 		if err != nil {
 			continue
 		}
-		month := date.Format("2006-01") // "YYYY-MM"
+		month := date.Format("January") // Get full month name (e.g., "February")
 
 		// Aggregate additions and deletions per month
 		entry := monthlyData[month]
@@ -68,13 +74,19 @@ func GenerateBarGraphData(commits []struct {
 		barGraphData = append(barGraphData, data)
 	}
 
-	// Sort by month
+	// Sort by actual time order instead of alphabetical order
+	monthOrder := map[string]int{
+		"January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6,
+		"July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12,
+	}
+
 	sort.Slice(barGraphData, func(i, j int) bool {
-		return barGraphData[i].Month < barGraphData[j].Month
+		return monthOrder[barGraphData[i].Month] < monthOrder[barGraphData[j].Month]
 	})
 
 	return barGraphData
 }
+
 
 func ExtractPRTimestamps(edges []struct{ Node struct{ CreatedAt string } }) []string {
 	timestamps := make([]string, len(edges))

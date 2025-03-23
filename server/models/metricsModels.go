@@ -82,10 +82,12 @@ type DonutChartData struct {
 }
 
 type GeneralMetrics struct {
-	TotalPRs int `json:"totalPRs"`
-	TotalCommits int `json:"totalCommits"`
-	TotalIssues int `json:"totalIssues"`
-	TotalStars int `json:"totalStars"`
+	TileData struct {
+		TotalPRs int `json:"totalPRs"`
+		TotalCommits int `json:"totalCommits"`
+		TotalIssues int `json:"totalIssues"`
+		TotalStars int `json:"totalStars"`
+	} `json:"tileData"`
 	AreaGraphData []AreaGraphData `json:"areaGraphData"`
 	BarGraphData []BarGraphData `json:"barGraphData"`
 	DonutChartData DonutChartData `json:"donutChartData"`

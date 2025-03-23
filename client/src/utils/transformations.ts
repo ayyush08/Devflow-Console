@@ -1,23 +1,28 @@
+import { GeneralMetricsType, } from "./type";
 
 
 
 
 
-export const processGeneralMetrics = (data: any) => {
 
-    
-    const tileData= [
-        { title: "Total Stars", value: data?.totalStars},
-        { title: "Total Commits", value: data?.totalCommits,  },
-        { title: "Total PRs", value: data?.totalPRs },
-        { title: "Total Issues", value: data?.totalIssues},
-    ]
-    
+export const processGeneralMetrics = (data: any): GeneralMetricsType => {
+
 
     return {
-        tileData,
-        areaGraphData: data?.areaGraphData,
-        barGraphData: data?.barGraphData,
-        donutChartData: data?.donutChartData,
+        tileData: {
+            totalStars: data.tileData.totalStars ?? 0,
+            totalCommits: data.tileData.totalCommits ?? 0,
+            totalPRs: data.tileData.totalPRs ?? 0,
+            totalIssues: data.tileData.totalIssues ?? 0,
+        },
+        areaGraphData: data.areaGraphData ?? [],
+        barGraphData: data.barGraphData ?? [],
+        donutChartData: {
+            mergedPRs: data.donutChartData?.mergedPRs ?? 0,
+            closedPRs: data.donutChartData?.closedPRs ?? 0,
+            openPRs: data.donutChartData?.openPRs ?? 0,
+        },
     };
-}
+};
+
+

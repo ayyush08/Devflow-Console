@@ -1,26 +1,28 @@
 import { processGeneralMetrics } from '@/utils/transformations';
+import { GeneralMetricsType } from '@/utils/type';
 import axios from 'axios';
-import{ useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-
-const BACKEND_URL =  process.env.NEXT_PUBLIC_BACKEND_URL 
-
-console.log("BACKEND_URL", BACKEND_URL);
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const axiosInstance = axios.create({
     baseURL: BACKEND_URL,
     withCredentials: true,
 });
 
-
 interface ApiParams {
     owner: string | null;
     repo: string | null;
-    role?: "developer" | "qa" | "manager" | "general" ;
+    role?: "developer" | "qa" | "manager" | "general";
 }
 
+
+
+// Define response type for non-general metrics (adjust as needed)
+type MetricsData = GeneralMetricsType | Record<string, any>;
+
 export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<MetricsData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -30,8 +32,6 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
         let endpoint = role === "general" ? `/api/v1/metrics/general/${owner}/${repo}` : `/api/v1/metrics/${owner}/${repo}`;
 
         const fetchMetrics = async () => {
-            console.log("Fetching metrics...");
-            
             setLoading(true);
             setError(null);
             try {
@@ -42,11 +42,8 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
                 } else if (role === "manager") {
                     endpoint += "/manager";
                 }
-                else{
-                    endpoint += ""
-                }
 
-                const response = await axiosInstance.get(endpoint);
+                const response = await axiosInstance.get<MetricsData>(endpoint);
                 setData(response.data);
             } catch (err) {
                 setError("Failed to fetch data");
@@ -57,23 +54,12 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
         };
 
         fetchMetrics();
-    }, [owner, repo, role]); 
+    }, [owner, repo, role]);
 
-    
-
-    if(role === "general"){
-        console.log(data);
-        
-        const generalMetrics = processGeneralMetrics(data);
+    if (role === "general" && data) {
+        const generalMetrics: GeneralMetricsType = processGeneralMetrics(data as GeneralMetricsType);
         return { generalMetrics, loading, error };
     }
 
-    console.log("returning data:", data);
-    
-
     return { data, loading, error };
 };
-
-
-
-

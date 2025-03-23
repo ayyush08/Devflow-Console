@@ -1,12 +1,13 @@
 export interface GeneralMetricsType {
-    tileData: { title: string, value: number }[];
-    areaGraphData: any;
-    barGraphData: any;
-    donutChartData: any;
-    totalCommits: number;
-    totalPRs: number;
-    totalIssues: number;
-    totalStars: number;
+    tileData: {
+        totalPRs: number;
+        totalCommits: number;
+        totalIssues: number;
+        totalStars: number;
+    };
+    areaGraphData:any[];
+    barGraphData:any[];
+    donutChartData: any
 }
 
 export interface TilePropsType {
