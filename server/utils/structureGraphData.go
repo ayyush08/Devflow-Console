@@ -10,16 +10,16 @@ import (
 func GenerateAreaGraphData(prTimestamps []models.PRNode, commitTimestamps []models.CommitNode) []models.AreaGraphData {
 	prs := make(map[string]models.AreaGraphData)
 
-	// Process PR timestamps
+
 	for _, t := range prTimestamps {
-		date := t.CreatedAt[:10] // Extract "YYYY-MM-DD"
+		date := t.CreatedAt[:10] 
 		point := prs[date]
 		point.Date = date
 		point.PullRequests++
 		prs[date] = point
 	}
 
-	// Process Commit timestamps
+
 	for _, t := range commitTimestamps {
 
 		date := t.CommittedDate[:10]

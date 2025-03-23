@@ -8,7 +8,6 @@ import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { Button } from './ui/button'
 import ChartLoader from './loaders/ChartLoader'
 import { useGetMetrics } from '@/hooks/metricHooks'
-import { GeneralMetricsType } from '@/utils/type'
 import Icons from './Icons'
 
 
@@ -29,7 +28,7 @@ type TemplateType = "general" | "developer" | "qa" | "manager";
 
 const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
     const [template, setTemplate] = useState<TemplateType>(tabs[0].value as TemplateType)
-    const [metrics, setMetrics] = useState<GeneralMetricsType | null>(null);
+    const [metrics, setMetrics] = useState<any>(null);
 
     useEffect(() => {
         if (repoOwner && repoName) {
@@ -37,7 +36,7 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
         }
     }, [repoOwner, repoName]);
 
-    const { generalMetrics, data, loading, error } = useGetMetrics({
+    const {  data, loading, error } = useGetMetrics({
         owner: repoOwner || '',
         repo: repoName || '',
         role: template
@@ -45,10 +44,8 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
 
     useEffect(() => {
         console.log("Current template:", template);
-        if (template === "general" && generalMetrics) {
-            setMetrics(generalMetrics as GeneralMetricsType);
-        } else if (data) {
-            setMetrics(data as GeneralMetricsType); // Ensure correct type assertion
+        if (data) {
+            setMetrics(data);
         }
     }, [template, data]);
 
@@ -98,7 +95,7 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
                                 return (<Tile
                                     key={i}
                                     title={key}
-                                    value={value}
+                                    value={value as number}
                                     icon={<Icons name={key} />}
                                 />)
                             }

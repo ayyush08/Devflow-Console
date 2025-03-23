@@ -1,4 +1,3 @@
-import { processGeneralMetrics } from '@/utils/transformations';
 import { GeneralMetricsType } from '@/utils/type';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -56,10 +55,6 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
         fetchMetrics();
     }, [owner, repo, role]);
 
-    if (role === "general" && data) {
-        const generalMetrics: GeneralMetricsType = processGeneralMetrics(data as GeneralMetricsType);
-        return { generalMetrics, loading, error };
-    }
 
     return { data, loading, error };
 };
