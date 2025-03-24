@@ -1,10 +1,6 @@
 export const APP_NAME: string = "DevFlow Console";
 
-export const isAuthenticated: boolean = false;
 
-
-
-export const testRepo: string = 'ayyush08/ayyush08';
 
 export const sampleGeneralMetrics = {
     "repository": {
@@ -31,3 +27,15 @@ export const sampleGeneralMetrics = {
         "totalCommits": 400
     }
 }
+
+export const colorPalette = [
+    "red", 
+    "orange", 
+    "teal", 
+    "blue", 
+    "pink", 
+    "cyan", 
+    "green", 
+    "#FFFF00", 
+    "#32CD32", 
+];

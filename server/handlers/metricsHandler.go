@@ -23,15 +23,14 @@ func FetchMetrics(owner string, repo string, template string) (models.DashboardM
 		if !ok || item.Type != "template" {
 			return models.DashboardMetrics{}, fmt.Errorf("cache type mismatch: expected dashboard, got %T", cachedItem)
 		}
-	
+
 		metrics, ok := item.Value.(*models.DashboardMetrics) // Use pointer type assertion
 		if !ok {
 			return models.DashboardMetrics{}, fmt.Errorf("cache value type mismatch")
 		}
-	
+
 		return *metrics, nil // Dereference before returning
 	}
-	
 
 	graphQLPayload := models.GraphQLRequest{
 		Query: queries.MetricsQuery,
@@ -95,22 +94,19 @@ func FetchMetrics(owner string, repo string, template string) (models.DashboardM
 func FetchGeneralMetrics(owner string, repo string) (models.GeneralMetrics, error) {
 	cacheKey := fmt.Sprintf("general/%s/%s", owner, repo)
 
-	
-
 	if cachedItem, found := config.GlobalCache.Get(cacheKey); found {
 		item, ok := cachedItem.(config.MetricsCacheItem)
 		if !ok || item.Type != "general" {
 			return models.GeneralMetrics{}, fmt.Errorf("cache type mismatch: expected general, got %T", cachedItem)
 		}
-	
-		generalMetrics, ok := item.Value.(*models.GeneralMetrics) // Use pointer type assertion
+
+		generalMetrics, ok := item.Value.(*models.GeneralMetrics)
 		if !ok {
 			return models.GeneralMetrics{}, fmt.Errorf("cache value type mismatch")
 		}
-	
-		return *generalMetrics, nil // Dereference before returning
+
+		return *generalMetrics, nil
 	}
-	
 
 	since := time.Now().AddDate(0, 0, -30).UTC().Format(time.RFC3339)
 
@@ -182,6 +178,7 @@ func FetchGeneralMetrics(owner string, repo string) (models.GeneralMetrics, erro
 
 	generalMetrics.AreaGraphData = utils.GenerateAreaGraphData(prTimestamps, commitTimestamps)
 
+	
 	generalMetrics.DonutChartData.ClosedPRs = repoData.ClosedPRs.TotalCount
 	generalMetrics.DonutChartData.MergedPRs = repoData.MergedPRs.TotalCount
 	generalMetrics.DonutChartData.OpenPRs = repoData.OpenPRs.TotalCount
@@ -189,7 +186,6 @@ func FetchGeneralMetrics(owner string, repo string) (models.GeneralMetrics, erro
 	barData := repoData.BarData.Target.History.Edges
 
 	generalMetrics.BarGraphData = utils.GenerateBarGraphData(barData)
-
 
 	cacheItem := config.MetricsCacheItem{
 		Type:  "general",

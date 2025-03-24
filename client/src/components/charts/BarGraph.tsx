@@ -5,7 +5,6 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -21,7 +20,7 @@ import { useMemo } from "react";
 
 
 export function BarGraph(
-    { chartData }: { chartData: any[] }
+    { chartData,title }: { chartData: any[] ,title:string}
 ) {
 
     const keys = useMemo(() => {
@@ -29,12 +28,13 @@ export function BarGraph(
     }, [chartData]);
 
     
-    
+    console.log("Incoming bar data: ",chartData);
+        
     const chartConfig = useMemo(() => {
         return keys.reduce((config, key, index) => {
             config[key] = {
                 label: key.charAt(0).toUpperCase() + key.slice(1),
-                color: `hsl(var(--chart-${index + 1}))`,
+                color: index === 0 ? "red" : "teal",
             };
             return config;
         }, {} as ChartConfig);
@@ -49,9 +49,10 @@ export function BarGraph(
 
     return (
         <Card className="text-white bg-transparent w-full border-none">
-            <CardHeader className="text-center">
-                <CardTitle>Bar Chart - Multiple</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
+            <CardHeader className="text-center text-xl">
+                <CardTitle>
+                    Monthly Distribution for {title} 
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig} className="p-4">
@@ -68,8 +69,8 @@ export function BarGraph(
                             cursor={false}
                             content={<ChartTooltipContent indicator="dot" className=" text-black" />}
                         />
-                        <Bar dataKey="desktop" fill="red" radius={4} />
-                        <Bar dataKey="mobile" fill="teal" radius={4} />
+                        <Bar dataKey={keys[0]} fill="red" radius={4} />
+                        <Bar dataKey={keys[1]} fill="teal" radius={4} />
                     </BarChart>
                 </ChartContainer>
             </CardContent>

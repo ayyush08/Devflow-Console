@@ -6,7 +6,6 @@ import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -38,8 +37,6 @@ export function AreaGraph(
     const [timeRange, setTimeRange] = React.useState("30d")
     if (!chartData || chartData.length === 0) return null
 
-
-    console.log("AreaGraph incoming chartData", chartData);
     const sampleItem = chartData[0] || {}
     const dateKey =
         Object.keys(sampleItem).find(
@@ -76,22 +73,17 @@ export function AreaGraph(
     })
 
 
-    console.log("AreaGraph chartConfig", dynamicChartConfig);
-
-
-
-
-    console.log("AreaGraph filteredData", filteredData);
-
 
     return (
         <Card className="bg-transparent text-white w-full border-none ">
-            <CardHeader className="flex   items-center gap-2 space-y-0 py-5 sm:flex-row">
+            <CardHeader className="flex   items-center gap-2 space-y-0 py-5 sm:flex-row text-xl">
                 <div className="grid flex-1 gap-1 text-center sm:text-left">
-                    <CardTitle>Area Chart - Interactive</CardTitle>
-                    <CardDescription>
-                        Showing data for the last 30 days
-                    </CardDescription>
+                    <CardTitle>{
+                        dataKeys.map((key) => key.charAt(0).toUpperCase() + key.slice(1)).join(" vs ") 
+                        
+                        }
+                        {timeRange === "30d" ? "   over last 30 days" : timeRange === "7d" ? "  over last 7 days" : ""}
+                        </CardTitle>
                 </div>
                 <Select value={timeRange} onValueChange={setTimeRange}>
                     <SelectTrigger

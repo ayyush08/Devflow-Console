@@ -10,7 +10,6 @@ import ChartLoader from './loaders/ChartLoader'
 import { useGetMetrics } from '@/hooks/metricHooks'
 import Icons from './Icons'
 
-
 const tabs = [
     { name: "General", value: "general" },
     { name: "Developer", value: "developer" },
@@ -36,7 +35,7 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
         }
     }, [repoOwner, repoName]);
 
-    const {  data, loading, error } = useGetMetrics({
+    const { data, loading, error } = useGetMetrics({
         owner: repoOwner || '',
         repo: repoName || '',
         role: template
@@ -56,7 +55,8 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
     if (loading) {
         return <ChartLoader color='orange' />
     }
-
+    const { labelKey, valueKey } = getlabelAndValueForDonutChart(template);
+    const barTitle = getTitleForBarGraph(template);
     return (
         <div className="w-full">
             <Button
@@ -68,7 +68,7 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
             </Button>
             <div className="bg-transparent text-white w-full h-full flex flex-col items-center justify-center p-14 z-10 relative">
                 <h1 className="text-2xl md:text-5xl font-extrabold mx-auto p-5 text-white">
-                    {repoName} Dashboard
+                    Metrics for {repoOwner}/{repoName}
                 </h1>
                 <Tabs className='flex justify-center items-center w-full gap-6'>
                     <h2 className="text-xl md:text-2xl font-mono font-semibold my-4 text-center">
@@ -91,7 +91,7 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
                     {metrics?.tileData && (
                         <div className="flex gap-3 p3">
                             {Object.entries(metrics.tileData).map(([key, value], i) => {
-                                
+
                                 return (<Tile
                                     key={i}
                                     title={key}
@@ -106,8 +106,11 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
                 <div className="flex flex-col items-center gap-5 w-full overflow-hidden mt-2 flex-grow">
                     <AreaGraph chartData={metrics?.areaGraphData || []} />
                     <div className="flex justify-center min-w-full">
-                        <DonutChart chartData={metrics?.donutChartData || {}} />
-                        <BarGraph chartData={metrics?.barGraphData || []} />
+
+
+                        <DonutChart chartData={metrics?.donutChartData || {}} labelKey={labelKey} valueKey={valueKey} />
+
+                        <BarGraph title={barTitle} chartData={metrics?.barGraphData || []} />
                     </div>
                 </div>
             </div>
@@ -116,3 +119,35 @@ const Dashboard = ({ repoOwner, repoName, setRepo }: DashboardProps) => {
 }
 
 export default Dashboard;
+
+
+const getlabelAndValueForDonutChart = (type: string) => {
+    switch (type) {
+        case "general":
+            return { labelKey: "Pull Requests", valueKey: "Total Pull Requests" };
+        case "developer":
+            return { labelKey: "Language", valueKey: "Lines" };
+        case "qa":
+            return { labelKey: "Test", valueKey: "Count" };
+        case "manager":
+            return { labelKey: "Task", valueKey: "Count" };
+        default:
+            return { labelKey: "Category", valueKey: "Value" };
+    }
+}
+
+
+const getTitleForBarGraph = (type: string): string => {
+    switch (type) {
+        case "general":
+            return "Code Additions/Deletions";
+        case "developer":
+            return "Commits";
+        case "qa":
+            return "Bugs";
+        case "manager":
+            return "Tasks";
+        default:
+            return "Data";
+    }
+}

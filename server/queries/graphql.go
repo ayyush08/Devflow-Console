@@ -118,7 +118,7 @@ query RepoStats($owner: String!, $repo: String!, $since: GitTimestamp!) {
     barData: defaultBranchRef {
         target {
         ... on Commit {
-            history(first: 100, since: $since) {
+            history(first: 100) {
             edges {
                 node {
                 committedDate
