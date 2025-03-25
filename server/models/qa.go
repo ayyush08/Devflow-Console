@@ -1,7 +1,6 @@
 package models
 
 type TileDataQa struct{
-	TotalTestsRun int `json:"totalTestsRun"`
 	TotalBugsReported int `json:"totalBugsReported"`
 	TotalBugsResolved int `json:"totalBugsResolved"`
 	TotalTestSuites int `json:"totalTestSuites"`
@@ -34,6 +33,7 @@ type QaMetrics struct{
 
 
 type QaMetricsGraphQLResponse struct {
+	Data struct {
 	Repository struct {
 		TotalBugsReported struct {
 			TotalCount int `json:"totalCount"`
@@ -67,9 +67,18 @@ type QaMetricsGraphQLResponse struct {
 				CheckSuites struct {
 					Nodes []struct {
 						Conclusion string `json:"conclusion"`
+						CreatedAt string `json:"createdAt"`
 					} `json:"nodes"`
+					PageInfo struct {
+						HasNextPage bool `json:"hasNextPage"`
+						EndCursor string `json:"endCursor"`
+					}
 				} `json:"checkSuites"`
 			} `json:"target"`
 		} `json:"defaultBranchRef"`
 	} `json:"repository"`
+					} `json:"data"`
+	Errors []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
 }

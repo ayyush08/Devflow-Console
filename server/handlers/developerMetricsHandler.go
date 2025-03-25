@@ -25,7 +25,7 @@ func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {
 		}
 	}
 
-	sinceCommits := time.Now().AddDate(0, -6, 0).UTC().Format(time.RFC3339) // Last 6 months
+	sinceCommits := time.Now().AddDate(0, -6, 0).UTC().Format(time.RFC3339)
 
 	graphQLPayload := models.GraphQLRequest{
 		Query: queries.DeveloperMetricsQuery,
@@ -69,11 +69,9 @@ func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {
 	var devMetrics models.DeveloperMetrics
 	repoData := graphQLResponse.Data.Repository
 
-	// Tile Data
 	devMetrics.TileData.TotalCommits = repoData.DefaultBranchRef.Target.History.TotalCount
 	devMetrics.TileData.TotalPRs = repoData.PullRequests.TotalCount
 
-	// Compute total lines changed
 	totalAdditions, totalDeletions, totalReviews := 0, 0, 0
 	for _, edge := range repoData.Ref.Target.History.Edges {
 		totalAdditions += edge.Node.Additions
@@ -81,34 +79,31 @@ func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {
 	}
 	devMetrics.TileData.TotalLinesChanged = totalAdditions + totalDeletions
 
-	// Compute total reviews received
 	for _, pr := range repoData.PullRequests.Nodes {
 		totalReviews += pr.ReviewRequests.TotalCount
 	}
 	devMetrics.TileData.TotalReviewsReceived = totalReviews
 
-	// Area Graph Data (Last 30 Days)
-	sincePRs := time.Now().AddDate(0, 0, -30).UTC().Format("2006-01-02") // Last 30 days
+	sincePRs := time.Now().AddDate(0, 0, -30).UTC().Format("2006-01-02")
 	areaGraphDataMap := make(map[string]*models.AreaGraphDeveloperData)
 	for _, edge := range repoData.Ref.Target.History.Edges {
-		date := edge.Node.CommittedDate[:10] // Extract YYYY-MM-DD
+		date := edge.Node.CommittedDate[:10]
 		if _, exists := areaGraphDataMap[date]; !exists {
 			areaGraphDataMap[date] = &models.AreaGraphDeveloperData{Date: date}
 		}
 		areaGraphDataMap[date].Commits++
 	}
 	for _, pr := range repoData.PullRequests.Nodes {
-		date := pr.CreatedAt[:10] // Extract YYYY-MM-DD
+		date := pr.CreatedAt[:10]
 		if _, exists := areaGraphDataMap[date]; !exists {
 			areaGraphDataMap[date] = &models.AreaGraphDeveloperData{Date: date}
 		}
 		areaGraphDataMap[date].PullRequests++
 	}
 
-	// Sort Area Graph Data by date (Descending)
 	areaGraphData := make([]models.AreaGraphDeveloperData, 0, len(areaGraphDataMap))
 	for _, data := range areaGraphDataMap {
-		if data.Date >= sincePRs { // Only take data from the last 30 days
+		if data.Date >= sincePRs {
 			areaGraphData = append(areaGraphData, *data)
 		}
 	}
@@ -117,12 +112,11 @@ func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {
 	})
 	devMetrics.AreaGraphData = areaGraphData
 
-	// Bar Graph Data (Last 6 Months)
 	barGraphDataMap := make(map[string]*models.BarGraphDeveloperData)
 	for _, edge := range repoData.Ref.Target.History.Edges {
-		yearMonth := edge.Node.CommittedDate[:7] // Extract YYYY-MM
+		yearMonth := edge.Node.CommittedDate[:7]
 		t, _ := time.Parse("2006-01", yearMonth)
-		monthName := t.Format("January") // Convert to full month name
+		monthName := t.Format("January")
 
 		if _, exists := barGraphDataMap[monthName]; !exists {
 			barGraphDataMap[monthName] = &models.BarGraphDeveloperData{Month: monthName}
@@ -131,7 +125,6 @@ func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {
 		barGraphDataMap[monthName].Deletions += edge.Node.Deletions
 	}
 
-	// Sort Bar Graph Data by month (Descending)
 	barGraphData := make([]models.BarGraphDeveloperData, 0, len(barGraphDataMap))
 	for _, data := range barGraphDataMap {
 		barGraphData = append(barGraphData, *data)
@@ -143,7 +136,6 @@ func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {
 	})
 	devMetrics.BarGraphData = barGraphData
 
-	// Donut Chart Data (All time)
 	openPRs, mergedPRs, closedPRs, pendingReviews := 0, 0, 0, 0
 	for _, pr := range repoData.PullRequests.Nodes {
 		switch pr.State {
@@ -163,7 +155,6 @@ func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {
 		PendingReviews: pendingReviews,
 	}
 
-	// Cache the result
 	cacheItem := config.MetricsCacheItem{
 		Type:  "developer",
 		Value: &devMetrics,
