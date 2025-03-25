@@ -1,20 +1,20 @@
 package queries
 
 const DeveloperMetricsQuery = `
-query DeveloperMetrics($owner: String!, $repo: String!, $since: GitTimestamp!) {
+query DeveloperMetrics($owner: String!, $repo: String!, $sinceCommits: GitTimestamp!) {
   repository(owner: $owner, name: $repo) {
-    # Total Commits
+    # ✅ Total Commits (All time)
     defaultBranchRef {
       target {
         ... on Commit {
-          history(since: $since) {
+          history {
             totalCount
           }
         }
       }
     }
 
-    # Pull Requests (Total, Open, Closed, Merged)
+    # ✅ Pull Requests (All time, filter in Go for last 30 days)
     pullRequests(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
       totalCount
       nodes {
@@ -26,11 +26,11 @@ query DeveloperMetrics($owner: String!, $repo: String!, $since: GitTimestamp!) {
       }
     }
 
-    # Commit history (for daily commits, additions, deletions)
+    # ✅ Commit history (For Bar Graph: Last 6 months)
     ref(qualifiedName: "refs/heads/main") {
       target {
         ... on Commit {
-          history(first: 100, since: $since) {
+          history(first: 100, since: $sinceCommits) {
             edges {
               node {
                 committedDate
@@ -44,4 +44,6 @@ query DeveloperMetrics($owner: String!, $repo: String!, $since: GitTimestamp!) {
     }
   }
 }
+
+
 `

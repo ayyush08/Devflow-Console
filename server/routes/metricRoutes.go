@@ -10,5 +10,6 @@ func MetricRoutes(api *gin.RouterGroup){
 	{
 		metrics.GET("/:owner/:repo/*template", controllers.GetTemplatizedMetrics)
 		metrics.GET("/general/:owner/:repo", controllers.GetGeneralMetrics)
+		metrics.GET("/developer/:owner/:repo", controllers.GetDevTemplate)
 	}
 }
