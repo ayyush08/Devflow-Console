@@ -110,7 +110,7 @@ func FetchQaMetrics(owner, repo string) (models.QaMetrics, error) {
 	cutoffMonth := time.Now().AddDate(0, -6, 0).Format("2006-01")
 
 	for _, issue := range repoData.ClosedIssues.Nodes {
-		month := issue.ClosedAt[:7] // Extract YYYY-MM (Year-Month)
+		month := issue.ClosedAt[:7] 
 		t, _ := time.Parse("2006-01", month)
 		monthName := t.Format("January")
 		if month >= cutoffMonth {
@@ -119,6 +119,22 @@ func FetchQaMetrics(owner, repo string) (models.QaMetrics, error) {
 			}
 			barGraphDataMap[monthName].BugsFixed++
 		}
+	}
+
+	for _, test := range repoData.DefaultBranchRef.Target.CheckSuites.Nodes{
+		month := test.CreatedAt[:7]
+		t, _ := time.Parse("2006-01", month)
+		monthName := t.Format("January")
+
+		if month >= cutoffMonth {
+			if _, exists := barGraphDataMap[monthName]; !exists{
+				barGraphDataMap[monthName] = &models.BarGraphQaData{
+					Month: monthName,
+				}
+			}
+			barGraphDataMap[monthName].TestExecutions++
+		}
+		
 	}
 
 	barGraphData := make([]models.BarGraphQaData, 0, len(barGraphDataMap))

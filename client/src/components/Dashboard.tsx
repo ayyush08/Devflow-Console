@@ -126,11 +126,11 @@ const getlabelAndValueForDonutChart = (type: string) => {
         case "general":
             return { labelKey: "Pull Requests", valueKey: "Total Pull Requests" };
         case "developer":
-            return { labelKey: "Language", valueKey: "Lines" };
+            return { labelKey: "PR Activity", valueKey: "Total" };
         case "qa":
-            return { labelKey: "Test", valueKey: "Count" };
+            return { labelKey: "Tests Metric", valueKey: "Total Tests" };
         case "manager":
-            return { labelKey: "Task", valueKey: "Count" };
+            return { labelKey: "Total PR and Bug Activity", valueKey: "Total Count" };
         default:
             return { labelKey: "Category", valueKey: "Value" };
     }
@@ -140,13 +140,13 @@ const getlabelAndValueForDonutChart = (type: string) => {
 const getTitleForBarGraph = (type: string): string => {
     switch (type) {
         case "general":
-            return "Code Additions/Deletions";
+            return "Code Additions V/S Deletions";
         case "developer":
-            return "Commits";
+            return "Code Additions V/S Deletions";
         case "qa":
-            return "Bugs";
+            return "Bugs Fixed V/S Executed Tests";
         case "manager":
-            return "Tasks";
+            return "PRs Merged V/S Bugs Fixed";
         default:
             return "Data";
     }

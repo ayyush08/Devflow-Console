@@ -68,11 +68,11 @@ type QaMetricsGraphQLResponse struct {
 					Nodes []struct {
 						Conclusion string `json:"conclusion"`
 						CreatedAt string `json:"createdAt"`
+						CheckRuns struct {
+							TotalCount int `json:"totalCount"`
+						} `json:"checkRuns"`
 					} `json:"nodes"`
-					PageInfo struct {
-						HasNextPage bool `json:"hasNextPage"`
-						EndCursor string `json:"endCursor"`
-					}
+					
 				} `json:"checkSuites"`
 			} `json:"target"`
 		} `json:"defaultBranchRef"`

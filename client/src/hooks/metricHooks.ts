@@ -1,4 +1,4 @@
-import { GeneralMetricsType } from '@/utils/type';
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -17,18 +17,16 @@ interface ApiParams {
 
 
 
-// Define response type for non-general metrics (adjust as needed)
-type MetricsData = GeneralMetricsType | Record<string, any>;
 
 export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
-    const [data, setData] = useState<MetricsData | null>(null);
+    const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!owner || !repo) return;
 
-        let endpoint = role === "general" ? `/api/v1/metrics/general/${owner}/${repo}` : `/api/v1/metrics/${owner}/${repo}`;
+        let endpoint =  `/api/v1/metrics`;
 
         const fetchMetrics = async () => {
             setLoading(true);
@@ -40,9 +38,12 @@ export const useGetMetrics = ({ owner, repo, role }: ApiParams) => {
                     endpoint += "/qa";
                 } else if (role === "manager") {
                     endpoint += "/manager";
+                }else{
+                    endpoint += "/general"
                 }
 
-                const response = await axiosInstance.get<MetricsData>(endpoint);
+                endpoint+=`/${owner}/${repo}`
+                const response = await axiosInstance.get(endpoint);
                 setData(response.data);
             } catch (err) {
                 setError("Failed to fetch data");

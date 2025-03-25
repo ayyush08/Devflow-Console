@@ -35,11 +35,10 @@ const QaMetricsQuery = `query QaMetrics($owner: String!, $repo: String!) {
     checkSuites(first: 100) {
             nodes {
               conclusion # Success, Failure, or Skipped
-              createdAt   
-            }
-               pageInfo {
-              hasNextPage
-              endCursor
+              createdAt
+               checkRuns(first:100){
+                totalCount
+              }   
             }
           }
         }
