@@ -71,7 +71,7 @@ func FetchQaMetrics(owner, repo string) (models.QaMetrics, error) {
 
 	qaMetrics.TileData.TotalBugsReported = repoData.TotalBugsReported.TotalCount
 	qaMetrics.TileData.TotalBugsResolved = repoData.TotalBugsResolved.TotalCount
-	qaMetrics.TileData.TotalTestSuites = repoData.TotalTestSuites.TotalCount
+	qaMetrics.TileData.TotalDiscussions = repoData.TotalDiscussions.TotalCount
 
 	areaGraphDataMap := make(map[string]*models.AreaGraphQaData)
 
@@ -128,7 +128,7 @@ func FetchQaMetrics(owner, repo string) (models.QaMetrics, error) {
 	sort.Slice(barGraphData, func(i, j int) bool {
 		return barGraphData[i].Month > barGraphData[j].Month
 	})
-
+	
 	donutChartData := models.DonutChartQaData{}
 
 	for _, suite := range repoData.DefaultBranchRef.Target.CheckSuites.Nodes {

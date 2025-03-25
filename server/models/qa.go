@@ -3,7 +3,7 @@ package models
 type TileDataQa struct{
 	TotalBugsReported int `json:"totalBugsReported"`
 	TotalBugsResolved int `json:"totalBugsResolved"`
-	TotalTestSuites int `json:"totalTestSuites"`
+	TotalDiscussions int `json:"totalDiscussions"`
 }
 
 type AreaGraphQaData struct{
@@ -43,9 +43,9 @@ type QaMetricsGraphQLResponse struct {
 			TotalCount int `json:"totalCount"`
 		} `json:"totalBugsResolved"`
 
-		TotalTestSuites struct {
+		TotalDiscussions struct {
 			TotalCount int `json:"totalCount"`
-		} `json:"totalTestSuites"`
+		} `json:"totalDiscussions"`
 
 		
 		Issues struct {

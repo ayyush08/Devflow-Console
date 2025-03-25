@@ -1,13 +1,13 @@
 package queries
 
 const ManagerMetricsQuery = `
-query ManagerMetrics($owner: String!, $repo: String!, $since: GitTimestamp!) {
+query ManagerMetrics($owner: String!, $repo: String!) {
   repository(owner: $owner, name: $repo) {
     # Tile Data
     totalCommits: defaultBranchRef {
       target {
         ... on Commit {
-          history(since: $since) {
+          history {
             totalCount
           }
         }
@@ -19,21 +19,15 @@ query ManagerMetrics($owner: String!, $repo: String!, $since: GitTimestamp!) {
     totalBugsOpen:  issues(states: OPEN, labels: ["bug"]) {
       totalCount
     }
-    totalTestsRun: defaultBranchRef {
-      target {
-        ... on Commit {
-          history(since: $since) {
-            totalCount
-          }
-        }
-      }
-    }
+    totalIssuesOpen: issues(states: OPEN) {
+    totalCount
+  }
 
     # Area Graph Data (Commits & Bugs Reported per Day)
     commitsHistory: defaultBranchRef {
       target {
         ... on Commit {
-          history(since: $since, first: 100) {
+          history( first: 100) {
             edges {
               node {
                 committedDate
@@ -50,12 +44,12 @@ query ManagerMetrics($owner: String!, $repo: String!, $since: GitTimestamp!) {
     }
 
     # Bar Graph Data (PRs Merged & Bugs Fixed per Month)
-    prsMergedHistory: pullRequests(states: MERGED, first: 100) {
+    prsMergedHistory: pullRequests(states: MERGED, first: 100,orderBy: {field: UPDATED_AT,direction: DESC}) {
       nodes {
         mergedAt
       }
     }
-    bugsFixedHistory: issues(states: CLOSED, first: 100, labels: ["bug"]) {
+    bugsFixedHistory: issues(states: CLOSED, first: 100, labels: ["bug"],orderBy: {field: UPDATED_AT,direction: DESC}) {
       nodes {
         closedAt
       }

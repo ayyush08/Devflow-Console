@@ -10,7 +10,7 @@ const QaMetricsQuery = `query QaMetrics($owner: String!, $repo: String!) {
     totalBugsResolved: issues(labels: "bug", states: CLOSED) {
       totalCount
     }
-    totalTestSuites: discussions {
+    totalDiscussions: discussions {
       totalCount
     }
 
