@@ -24,7 +24,7 @@ USER appuser
 # Copy the binary from the builder stage
 COPY --from=builder /build/devflow-console /app/
 
-COPY .env /app/.env
+# COPY .env /app/.env
 WORKDIR /app
 
 # Run the built Go App
