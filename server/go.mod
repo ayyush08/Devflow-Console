@@ -1,4 +1,4 @@
-module github.com/ayyush08/devflow-console
+module github.com/ayyush08/devflow-console/server
 
 go 1.23.6
 

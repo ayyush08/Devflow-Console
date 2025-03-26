@@ -9,9 +9,9 @@ import (
 	"sort"
 	"time"
 
-	"github.com/ayyush08/devflow-console/config"
-	"github.com/ayyush08/devflow-console/models"
-	"github.com/ayyush08/devflow-console/queries"
+	"github.com/ayyush08/devflow-console/server/config"
+	"github.com/ayyush08/devflow-console/server/models"
+	"github.com/ayyush08/devflow-console/server/queries"
 )
 
 func FetchDevMetrics(owner, repo string) (models.DeveloperMetrics, error) {

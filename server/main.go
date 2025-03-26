@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ayyush08/devflow-console/middlewares"
-	"github.com/ayyush08/devflow-console/routes"
+	"github.com/ayyush08/devflow-console/server/middlewares"
+	"github.com/ayyush08/devflow-console/server/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
@@ -54,7 +54,7 @@ func main() {
 
 	log.Println("Starting server on", PORT)
 
-	if err := r.Run(PORT); err != nil {
+	if err := r.Run(":"+PORT); err != nil {
 		log.Fatal("Error starting Gin server: ", err)
 	}
 
